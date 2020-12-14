@@ -29,7 +29,7 @@ void MenuVictory(int* g){
     system("cls");
 
     printf("   ### LA TRAQUE ###\n");
-    printf("\nFELICITATION ! Vous avez abattu le monstre qui rodait dans ces bois.\n");
+    printf("\nFELICITATIONs ! Vous avez abattu le monstre qui rodait dans ces bois.\n");
 
     *g = 0;
 

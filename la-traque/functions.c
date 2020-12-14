@@ -326,14 +326,14 @@ void Detection(struct tile field[XMAX][YMAX], struct pisteur p, struct monstre* 
                 gotoxy(XMAX / 2, (YMAX / 2) + 0);
                 printf("**********************");
                 gotoxy(XMAX / 2, (YMAX / 2) + 1);
-                printf("* JE L'EST TOUCHE !  *");
+                printf("*  JE L'AI TOUCHE !  *");
                 gotoxy(XMAX / 2, (YMAX / 2) + 2);
                 printf("**********************");
             }else{
                 gotoxy(XMAX / 2, (YMAX / 2) + 0);
                 printf("**********************");
                 gotoxy(XMAX / 2, (YMAX / 2) + 1);
-                printf("*  JE L'EST RATE !   *");
+                printf("*   JE L'AI RATE !   *");
                 gotoxy(XMAX / 2, (YMAX / 2) + 2);
                 printf("**********************");
             }
@@ -415,7 +415,7 @@ void PrintScreen(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struc
     }
     PrintField(field);
     PrintCrew(crew);
-    PrintMonstre(monk);
+    // PrintMonstre(monk);
 }
 
 void InitMonstre(struct monstre* monk, struct pisteur crew[CREW]){
