@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1607948908 source:c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\main.c
+	<stdio.h>
+	<stdlib.h>
+	"functions.c"
+
+1607951663 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"structures.c"
+
+1607690794 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\structures.c
+	<stdio.h>
+	<stdlib.h>
+
