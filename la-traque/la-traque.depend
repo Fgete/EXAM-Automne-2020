@@ -5,17 +5,18 @@
 	"functions.c"
 	"titles.c"
 
-1607952764 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
-	<stdio.h>
-	<stdlib.h>
+1608070304 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
 	<time.h>
-	"structures.c"
+	"prints.c"
 
 1607690794 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\structures.c
 	<stdio.h>
 	<stdlib.h>
 
-1607952295 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\titles.c
+1607953939 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\titles.c
 	<stdio.h>
 	<stdlib.h>
+
+1608070315 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\prints.c
+	"structures.c"
 
