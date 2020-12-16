@@ -1,5 +1,6 @@
 #include <time.h>
 #include "prints.c"
+#include "graphics.c"
 
 // PROTOTYPES
 char GetAnswer();

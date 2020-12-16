@@ -7,7 +7,7 @@ struct tile field[XMAX][YMAX];
 struct pisteur crew[CREW];
 struct monstre monk;
 
-int main()
+int main(int argc, char *argv[])
 {
     int gameState = 0;
 
