@@ -1,9 +1,8 @@
 #include <time.h>
+#include <windows.h>
 #include "prints.c"
-#include "graphics.c"
 
 // PROTOTYPES
-char GetAnswer();
 void Init(struct tile[XMAX][YMAX], struct pisteur[CREW], struct monstre*, int*);
 void Round(struct tile[XMAX][YMAX], struct pisteur[CREW], struct monstre*, int*);
 void InitMonstre(struct monstre*, struct pisteur[CREW]);
@@ -349,16 +348,6 @@ void Footprint(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct 
 
     field[monk.x][monk.y].traceMonstre = 16;
     field[monk.x][monk.y].tracePisteur = 0;
-}
-
-// Get answer from user
-char GetAnswer(){
-    char answer = 'x';
-    while (answer != 'y' && answer != 'Y' && answer != 'n' && answer != 'N'){
-        fflush(stdin);
-        answer = getchar();
-    }
-    return toupper(answer);
 }
 
 // Initialize monster
