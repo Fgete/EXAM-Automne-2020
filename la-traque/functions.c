@@ -7,9 +7,10 @@ void Init(struct tile[XMAX][YMAX], struct pisteur[CREW], struct monstre*, int*, 
 void Round(struct tile[XMAX][YMAX], struct pisteur[CREW], struct monstre*, int*, struct renderer);
 void InitMonstre(struct monstre*, struct pisteur[CREW]);
 void Footprint(struct tile[XMAX][YMAX], struct pisteur[CREW], struct monstre);
-void Detection(struct tile[XMAX][YMAX], struct pisteur, struct monstre*);
+void Detection(struct tile[XMAX][YMAX], struct pisteur, struct monstre*, struct renderer);
 void PisteurMovement(struct tile[XMAX][YMAX], struct pisteur*);
 void MonstreMovement(struct tile[XMAX][YMAX], struct monstre*);
+void IntToString(int, char[2]);
 
 // Initialization (SDL OK)
 void Init(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct monstre* monk, int* g, struct renderer sRenderer){
@@ -235,9 +236,11 @@ void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct mons
 
     // Variables
     SDL_Event event;
+    char s[2];
     int nPisteur = 0;
     int isCrewDead = 1;
     int roundState = 0;
+    IntToString(nPisteur + 1, s);
 
     // SDL
     SDL_Rect titleRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 1200 * WINDOW_RATIO, 700 * WINDOW_RATIO, 350 * WINDOW_RATIO, 50 * WINDOW_RATIO};
@@ -253,7 +256,7 @@ void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct mons
     rendererObject rightRender;
 
     titleRender.pSurface = TTF_RenderText_Solid(textFont, "Pisteur", Black);
-    numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black);
+    numberRender.pSurface = TTF_RenderText_Solid(textFont, s, Black);
     stateRender.pSurface = TTF_RenderText_Solid(textFont, "Actif", Green);
     leftRender.pSurface = IMG_Load("./assets/misc/leftArrow.png");
     rightRender.pSurface = IMG_Load("./assets/misc/rightArrow.png");
@@ -294,38 +297,14 @@ void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct mons
                                     nPisteur--;
                                 else
                                     nPisteur = CREW - 1;
-                                switch (nPisteur + 1){
-                                    case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
-                                    case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
-                                    case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
-                                    case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
-                                    case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
-                                    case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
-                                    case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
-                                    case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
-                                    case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
-                                    case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
-                                    default : break;
-                                }
+                                IntToString(nPisteur + 1, s);
                                 break;
                             case SDLK_RIGHT: /*choice right*/
                                 if (nPisteur < CREW - 1)
                                     nPisteur++;
                                 else
                                     nPisteur = 0;
-                                switch (nPisteur + 1){
-                                    case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
-                                    case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
-                                    case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
-                                    case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
-                                    case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
-                                    case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
-                                    case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
-                                    case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
-                                    case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
-                                    case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
-                                    default : break;
-                                }
+                                IntToString(nPisteur + 1, s);
                                 break;
                             default : break;
                         }
@@ -342,10 +321,11 @@ void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct mons
                     stateRender.pSurface = TTF_RenderText_Solid(textFont, "Actif", Green);
                 }else
                     stateRender.pSurface = TTF_RenderText_Solid(textFont, "Inactif", Red);
+                numberRender.pSurface = TTF_RenderText_Solid(textFont, s, Black);
 
                 numberRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, numberRender.pSurface);
                 stateRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, stateRender.pSurface);
-
+                // Draw
                 SDL_RenderClear(sRenderer.pRenderer);
                 PrintBackground(sRenderer);
                 PrintField(field, sRenderer);
@@ -355,6 +335,9 @@ void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct mons
                 SDL_RenderCopy(sRenderer.pRenderer, stateRender.pTexture, NULL, &stateRect);
                 SDL_RenderCopy(sRenderer.pRenderer, leftRender.pTexture, NULL, &leftRect);
                 SDL_RenderCopy(sRenderer.pRenderer, rightRender.pTexture, NULL, &rightRect);
+                // Detection
+                // Detection(field, crew[nPisteur], monk, sRenderer);
+
                 SDL_RenderPresent(sRenderer.pRenderer);
             break;
         }
@@ -374,7 +357,7 @@ void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct mons
                 PrintScreen(field, crew, *monk, sRenderer);
                 gotoxy(XMAX + 5, YMAX / 2);
                 printf("Rapport du pisteur %d :\n", i + 1);
-                Detection(field, crew[i], monk);
+                Detection(field, crew[i], monk, sRenderer);
                 crew[i].icone = 'P'; // Reset icone
             }
         }
@@ -509,7 +492,7 @@ void PisteurMovement(struct tile field[XMAX][YMAX], struct pisteur* p){
 }
 
 // Pisteur detection
-void Detection(struct tile field[XMAX][YMAX], struct pisteur p, struct monstre* monk){
+void Detection(struct tile field[XMAX][YMAX], struct pisteur p, struct monstre* monk, struct renderer sRenderer){
     int view[8];
     for (int i = 0; i < 8; i++)
         view[i] = 0;
@@ -659,4 +642,16 @@ void InitMonstre(struct monstre* monk, struct pisteur crew[CREW]){
         monk->x = x;
         monk->y = y;
     }
+}
+
+// Convert int to string
+void IntToString(int n, char s[2]){
+    const char digit[10] = {'0','1','2','3','4','5','6','7','8','9'};
+    int dixaine = n / 10;
+    int unite = n % 10;
+    if (dixaine)
+        s[0] = digit[dixaine];
+    else
+        s[0] = ' ';
+    s[1] = digit[unite];
 }
