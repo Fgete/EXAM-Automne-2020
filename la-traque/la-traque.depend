@@ -5,7 +5,7 @@
 	<string.h>
 	"functions.c"
 
-1608165004 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
+1608213194 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
 	<time.h>
 	<windows.h>
 	"prints.c"
@@ -14,7 +14,7 @@
 	<stdio.h>
 	<stdlib.h>
 
-1608159576 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\titles.c
+1608209692 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\titles.c
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<SDL2/SDL_ttf.h>
@@ -23,7 +23,7 @@
 	<windows.h>
 	"graphics.c"
 
-1608164316 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\prints.c
+1608211415 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\prints.c
 	"structures.c"
 	"titles.c"
 

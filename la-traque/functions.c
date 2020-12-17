@@ -11,7 +11,7 @@ void Detection(struct tile[XMAX][YMAX], struct pisteur, struct monstre*);
 void PisteurMovement(struct tile[XMAX][YMAX], struct pisteur*);
 void MonstreMovement(struct tile[XMAX][YMAX], struct monstre*);
 
-// Initialization
+// Initialization (SDL OK)
 void Init(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct monstre* monk, int* g, struct renderer sRenderer){
     // Font load
     TTF_Font* textFont = TTF_OpenFont("./assets/font/textFont.ttf", 24);
@@ -21,33 +21,43 @@ void Init(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct monst
 
     // Variables
     SDL_Event event;
-    int isComplete = 0;
+    int nChoice = 0;
+    int initState = 0;
     int nPisteur = 1;
     int hor = 0;
     int ver = 0;
 
     // SDL
     SDL_Rect textRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 1000 * WINDOW_RATIO, 100 * WINDOW_RATIO, 1000 * WINDOW_RATIO, 75 * WINDOW_RATIO};
+    SDL_Rect instructionRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 1000 * WINDOW_RATIO, 700 * WINDOW_RATIO, 1000 * WINDOW_RATIO, 50 * WINDOW_RATIO};
     SDL_Rect numberRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 595 * WINDOW_RATIO, 350 * WINDOW_RATIO, 200 * WINDOW_RATIO, 200 * WINDOW_RATIO};
     SDL_Rect leftRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 700 * WINDOW_RATIO, 415 * WINDOW_RATIO, 80 * WINDOW_RATIO, 80 * WINDOW_RATIO};
     SDL_Rect rightRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 400 * WINDOW_RATIO, 415 * WINDOW_RATIO, 80 * WINDOW_RATIO, 80 * WINDOW_RATIO};
+    // SDL_Rect cursorRect = {OFFSETX * 2 + hor * (SLOTWIDTH + SLOTSPACE), SLOTSPACE * 2 + ver * (SLOTWIDTH + SLOTSPACE), SLOTWIDTH, SLOTWIDTH};
 
     rendererObject textRender;
+    rendererObject instructionRender;
     rendererObject numberRender;
     rendererObject leftRender;
     rendererObject rightRender;
+    rendererObject cursorRender;
 
     textRender.pSurface = TTF_RenderText_Solid(textFont, "Nombre de pisteurs", Black);
+    instructionRender.pSurface = TTF_RenderText_Solid(textFont, "Positionnez vos pisteurs", Black);
     numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black);
     leftRender.pSurface = IMG_Load("./assets/misc/leftArrow.png");
     rightRender.pSurface = IMG_Load("./assets/misc/rightArrow.png");
+    cursorRender.pSurface = IMG_Load("./assets/misc/cursor.png");
 
     textRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, textRender.pSurface);
+    instructionRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, instructionRender.pSurface);
     numberRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, numberRender.pSurface);
     leftRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, leftRender.pSurface);
     rightRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, rightRender.pSurface);
+    cursorRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, cursorRender.pSurface);
 
     SDL_FreeSurface(textRender.pSurface);
+    SDL_FreeSurface(instructionRender.pSurface);
     SDL_FreeSurface(leftRender.pSurface);
     SDL_FreeSurface(rightRender.pSurface);
 
@@ -61,135 +71,301 @@ void Init(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct monst
             field[x][y].tracePisteur = 0;
         }
 
-    // Init crew (number menber)
-    while (!isComplete){
-        while (SDL_PollEvent(&event)){
-            fflush(stdin);
-            if (event.type == SDL_KEYDOWN)
-                switch (event.key.keysym.sym){
-                    case SDLK_RETURN: /*valid choice*/ isComplete = 1; break;
-                    case SDLK_SPACE: /*valid choice*/ isComplete = 1; break;
-                    case SDLK_KP_ENTER: /*valid choice*/ isComplete = 1; break;
-                    case SDLK_LEFT: /*choice left*/
-                        if (nPisteur == 1)
-                            nPisteur = 10;
-                        else
-                            nPisteur--;
-                        switch (nPisteur){
-                            case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
-                            case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
-                            case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
-                            case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
-                            case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
-                            case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
-                            case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
-                            case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
-                            case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
-                            case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
+    while (initState != -1){
+        switch (initState){
+            case 0: /*crew number member*/
+                while (SDL_PollEvent(&event)){
+                    fflush(stdin);
+                    if (event.type == SDL_KEYDOWN)
+                        switch (event.key.keysym.sym){
+                            case SDLK_RETURN: /*valid choice*/ initState = 1; break;
+                            case SDLK_SPACE: /*valid choice*/ initState = 1; break;
+                            case SDLK_KP_ENTER: /*valid choice*/ initState = 1; break;
+                            case SDLK_LEFT: /*choice left*/
+                                if (nPisteur == 1)
+                                    nPisteur = 10;
+                                else
+                                    nPisteur--;
+                                switch (nPisteur){
+                                    case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
+                                    case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
+                                    case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
+                                    case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
+                                    case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
+                                    case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
+                                    case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
+                                    case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
+                                    case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
+                                    case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
+                                    default : break;
+                                }
+                                break;
+                            case SDLK_RIGHT: /*choice right*/
+                                if (nPisteur == 10)
+                                    nPisteur = 1;
+                                else
+                                    nPisteur++;
+                                switch (nPisteur){
+                                    case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
+                                    case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
+                                    case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
+                                    case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
+                                    case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
+                                    case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
+                                    case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
+                                    case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
+                                    case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
+                                    case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
+                                    default : break;
+                                }
+                                break;
                             default : break;
                         }
-                        break;
-                    case SDLK_RIGHT: /*choice right*/
-                        if (nPisteur == 10)
-                            nPisteur = 1;
-                        else
-                            nPisteur++;
-                        switch (nPisteur){
-                            case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
-                            case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
-                            case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
-                            case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
-                            case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
-                            case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
-                            case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
-                            case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
-                            case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
-                            case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
-                            default : break;
-                        }
-                        break;
-                    default : break;
+                    if (event.type == SDL_QUIT){
+                        initState = -1;
+                        *g = -1;
+                    }
                 }
-            if (event.type == SDL_QUIT)
-                *g = -1;
+                numberRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, numberRender.pSurface);
+                SDL_RenderClear(sRenderer.pRenderer);
+                PrintBackground(sRenderer);
+                SDL_RenderCopy(sRenderer.pRenderer, textRender.pTexture, NULL, &textRect);
+                SDL_RenderCopy(sRenderer.pRenderer, numberRender.pTexture, NULL, &numberRect);
+                SDL_RenderCopy(sRenderer.pRenderer, leftRender.pTexture, NULL, &leftRect);
+                SDL_RenderCopy(sRenderer.pRenderer, rightRender.pTexture, NULL, &rightRect);
+                SDL_RenderPresent(sRenderer.pRenderer);
+                for (int i = 0; i < CREW; i++){
+                    if (i < nPisteur)
+                        crew[i].icone = 'P';
+                    else
+                        crew[i].icone = '.';
+                    crew[i].x = -10;
+                    crew[i].y = -10;
+                }
+                break;
+            case 1: /*crew members position*/
+                while (SDL_PollEvent(&event)){
+                    fflush(stdin);
+                    if (event.type == SDL_KEYDOWN)
+                        switch (event.key.keysym.sym){
+                            case SDLK_RETURN: /*valid choice*/
+                                if (nChoice < nPisteur){
+                                    crew[nChoice].x = hor;
+                                    crew[nChoice].y = ver;
+                                    crew[nChoice].icone = 'P';
+                                    nChoice++;
+                                }
+                                if (nChoice >= nPisteur)
+                                    initState = 2;
+                                break;
+                            case SDLK_SPACE: /*valid choice*/
+                                if (nChoice < nPisteur){
+                                    crew[nChoice].x = hor;
+                                    crew[nChoice].y = ver;
+                                    crew[nChoice].icone = 'P';
+                                    nChoice++;
+                                }
+                                if (nChoice >= nPisteur)
+                                    initState = 2;
+                                break;
+                            case SDLK_KP_ENTER: /*valid choice*/
+                                if (nChoice < nPisteur){
+                                    crew[nChoice].x = hor;
+                                    crew[nChoice].y = ver;
+                                    crew[nChoice].icone = 'P';
+                                    nChoice++;
+                                }
+                                if (nChoice >= nPisteur)
+                                    initState = 2;
+                                break;
+                            case SDLK_UP: /*choice up*/
+                                if (ver > 0)
+                                    ver--;
+                                break;
+                            case SDLK_DOWN: /*choice down*/
+                                if (ver < YMAX - 1)
+                                    ver++;
+                                break;
+                            case SDLK_LEFT: /*choice left*/
+                                if (hor > 0)
+                                    hor--;
+                                break;
+                            case SDLK_RIGHT: /*choice right*/
+                                if (hor < XMAX - 1)
+                                    hor++;
+                                break;
+                            default : break;
+                        }
+                    if (event.type == SDL_QUIT){
+                        initState = -1;
+                        *g = -1;
+                    }
+                }
+                SDL_Rect cursorRect = {OFFSETX * 2 + hor * (SLOTWIDTH + SLOTSPACE), SLOTSPACE * 2 + ver * (SLOTWIDTH + SLOTSPACE), SLOTWIDTH, SLOTWIDTH};
+                SDL_RenderClear(sRenderer.pRenderer);
+                PrintBackground(sRenderer);
+                SDL_RenderCopy(sRenderer.pRenderer, instructionRender.pTexture, NULL, &instructionRect);
+                PrintField(field, sRenderer);
+                PrintCrew(crew, sRenderer);
+                SDL_RenderCopy(sRenderer.pRenderer, cursorRender.pTexture, NULL, &cursorRect);
+                SDL_RenderPresent(sRenderer.pRenderer);
+                break;
+            case 2: /*monster position*/
+                InitMonstre(monk, crew);
+                initState = -1;
+                *g = 2;
+                break;
         }
-        numberRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, numberRender.pSurface);
-        SDL_RenderClear(sRenderer.pRenderer);
-        PrintBackground(sRenderer);
-        SDL_RenderCopy(sRenderer.pRenderer, textRender.pTexture, NULL, &textRect);
-        SDL_RenderCopy(sRenderer.pRenderer, numberRender.pTexture, NULL, &numberRect);
-        SDL_RenderCopy(sRenderer.pRenderer, leftRender.pTexture, NULL, &leftRect);
-        SDL_RenderCopy(sRenderer.pRenderer, rightRender.pTexture, NULL, &rightRect);
-        SDL_RenderPresent(sRenderer.pRenderer);
     }
     SDL_FreeSurface(numberRender.pSurface);
+    SDL_FreeSurface(cursorRender.pSurface);
 
-    // Init crew (position member)
-    gotoxy(XMAX + 5, YMAX / 2);
-    printf("Combien de pisteur souhaitez-vous avoir ? [1-10]\n");
-    while (nPisteur < 1 || nPisteur > 10){
-        gotoxy(XMAX + 5, YMAX / 2 + 1);
-        scanf("%d", &nPisteur);
-    }
-    for (int i = 0; i < CREW; i++){
-        if (i < nPisteur){
-            crew[i].icone = 'P';
-            while (hor < 1 || hor > XMAX){
-                gotoxy(XMAX + 5, YMAX / 2 + 2);
-                printf("Donnez la coordonnee horizontale du pisteur %d : [1-%d]\n", i + 1, XMAX);
-                gotoxy(XMAX + 5, YMAX / 2 + 3);
-                scanf("%d", &hor);
-            }
-            while (ver < 1 || ver > YMAX){
-                gotoxy(XMAX + 5, YMAX / 2 + 4);
-                printf("Donnez la coordonnee verticale du pisteur %d : [1-%d]\n", i + 1, YMAX);
-                gotoxy(XMAX + 5, YMAX / 2 + 5);
-                scanf("%d", &ver);
-            }
-
-            crew[i].x = hor - 1;
-            crew[i].y = ver - 1;
-
-            hor = 0;
-            ver = 0;
-
-            PrintScreen(field, crew, *monk, sRenderer);
-        }else{
-            crew[i].icone = '.';
-            crew[i].x = -1;
-            crew[i].y = -1;
-        }
-    }
-
-    // Init monk
-    InitMonstre(monk, crew);
-    PrintScreen(field, crew, *monk, sRenderer);
-
-    gotoxy(XMAX + 5, YMAX / 2);
-    printf("Monk-C rode...");
-
-    fflush(stdin);
-    getchar();
-
-    *g = 2;
+    // PrintCrewInfo(crew);
 }
 
 // Round
 void Round(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct monstre* monk, int* g, struct renderer sRenderer){
-    int isCrewDead = 1;
+    // Font load
+    TTF_Font* textFont = TTF_OpenFont("./assets/font/textFont.ttf", 24);
+    if (!textFont)
+        printf("textFont.ttf --- LOAD ERROR !\n");
+    SDL_Color Black = {0, 0, 0};
+    SDL_Color Red = {255, 0, 0};
+    SDL_Color Green = {0, 255, 0};
 
-    // Determine if the crew is defeated
+    // Variables
+    SDL_Event event;
+    int nPisteur = 0;
+    int isCrewDead = 1;
+    int roundState = 0;
+
+    // SDL
+    SDL_Rect titleRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 1200 * WINDOW_RATIO, 700 * WINDOW_RATIO, 350 * WINDOW_RATIO, 50 * WINDOW_RATIO};
+    SDL_Rect numberRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 800 * WINDOW_RATIO, 700 * WINDOW_RATIO, 75 * WINDOW_RATIO, 50 * WINDOW_RATIO};
+    SDL_Rect stateRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 1150 * WINDOW_RATIO, 750 * WINDOW_RATIO, 300 * WINDOW_RATIO, 50 * WINDOW_RATIO};
+    SDL_Rect leftRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 830 * WINDOW_RATIO, 715 * WINDOW_RATIO, 25 * WINDOW_RATIO, 25 * WINDOW_RATIO};
+    SDL_Rect rightRect = {GetSystemMetrics(SM_CXSCREEN) * .5 - 730 * WINDOW_RATIO, 715 * WINDOW_RATIO, 25 * WINDOW_RATIO, 25 * WINDOW_RATIO};
+
+    rendererObject titleRender;
+    rendererObject numberRender;
+    rendererObject stateRender;
+    rendererObject leftRender;
+    rendererObject rightRender;
+
+    titleRender.pSurface = TTF_RenderText_Solid(textFont, "Pisteur", Black);
+    numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black);
+    stateRender.pSurface = TTF_RenderText_Solid(textFont, "Actif", Green);
+    leftRender.pSurface = IMG_Load("./assets/misc/leftArrow.png");
+    rightRender.pSurface = IMG_Load("./assets/misc/rightArrow.png");
+
+    titleRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, titleRender.pSurface);
+    leftRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, leftRender.pSurface);
+    rightRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, rightRender.pSurface);
+
+    SDL_FreeSurface(titleRender.pSurface);
+    SDL_FreeSurface(leftRender.pSurface);
+    SDL_FreeSurface(rightRender.pSurface);
+
+    // If defeated
     for (int i = 0; i < CREW; i++)
         if (crew[i].icone == 'P')
             isCrewDead = 0;
+    if (isCrewDead){
+        roundState = -1;
+        *g = 4; // DEFEAT
+    }
+
+    // PHASE 0
+    //   Footprints
+    Footprint(field, crew, *monk);
+
+    while (roundState != -1){
+        switch (roundState){
+            case 0: /* DETECTION */
+                while (SDL_PollEvent(&event)){
+                    fflush(stdin);
+                    if (event.type == SDL_KEYDOWN)
+                        switch (event.key.keysym.sym){
+                            case SDLK_RETURN: /*valid choice*/ break;
+                            case SDLK_SPACE: /*valid choice*/ break;
+                            case SDLK_KP_ENTER: /*valid choice*/ break;
+                            case SDLK_LEFT: /*choice left*/
+                                if (nPisteur > 0)
+                                    nPisteur--;
+                                else
+                                    nPisteur = CREW - 1;
+                                switch (nPisteur + 1){
+                                    case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
+                                    case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
+                                    case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
+                                    case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
+                                    case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
+                                    case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
+                                    case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
+                                    case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
+                                    case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
+                                    case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
+                                    default : break;
+                                }
+                                break;
+                            case SDLK_RIGHT: /*choice right*/
+                                if (nPisteur < CREW - 1)
+                                    nPisteur++;
+                                else
+                                    nPisteur = 0;
+                                switch (nPisteur + 1){
+                                    case 1: numberRender.pSurface = TTF_RenderText_Solid(textFont, "1", Black); break;
+                                    case 2: numberRender.pSurface = TTF_RenderText_Solid(textFont, "2", Black); break;
+                                    case 3: numberRender.pSurface = TTF_RenderText_Solid(textFont, "3", Black); break;
+                                    case 4: numberRender.pSurface = TTF_RenderText_Solid(textFont, "4", Black); break;
+                                    case 5: numberRender.pSurface = TTF_RenderText_Solid(textFont, "5", Black); break;
+                                    case 6: numberRender.pSurface = TTF_RenderText_Solid(textFont, "6", Black); break;
+                                    case 7: numberRender.pSurface = TTF_RenderText_Solid(textFont, "7", Black); break;
+                                    case 8: numberRender.pSurface = TTF_RenderText_Solid(textFont, "8", Black); break;
+                                    case 9: numberRender.pSurface = TTF_RenderText_Solid(textFont, "9", Black); break;
+                                    case 10: numberRender.pSurface = TTF_RenderText_Solid(textFont, "10", Black); break;
+                                    default : break;
+                                }
+                                break;
+                            default : break;
+                        }
+                    if (event.type == SDL_QUIT){
+                        roundState = -1;
+                        *g = -1;
+                    }
+                }
+                for (int i = 0; i < CREW; i++)
+                    if (crew[i].icone != '.')
+                        crew[i].icone = 'P';
+                if (crew[nPisteur].icone == 'P'){
+                    crew[nPisteur].icone = '!';
+                    stateRender.pSurface = TTF_RenderText_Solid(textFont, "Actif", Green);
+                }else
+                    stateRender.pSurface = TTF_RenderText_Solid(textFont, "Inactif", Red);
+
+                numberRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, numberRender.pSurface);
+                stateRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, stateRender.pSurface);
+
+                SDL_RenderClear(sRenderer.pRenderer);
+                PrintBackground(sRenderer);
+                PrintField(field, sRenderer);
+                PrintCrew(crew, sRenderer);
+                SDL_RenderCopy(sRenderer.pRenderer, titleRender.pTexture, NULL, &titleRect);
+                SDL_RenderCopy(sRenderer.pRenderer, numberRender.pTexture, NULL, &numberRect);
+                SDL_RenderCopy(sRenderer.pRenderer, stateRender.pTexture, NULL, &stateRect);
+                SDL_RenderCopy(sRenderer.pRenderer, leftRender.pTexture, NULL, &leftRect);
+                SDL_RenderCopy(sRenderer.pRenderer, rightRender.pTexture, NULL, &rightRect);
+                SDL_RenderPresent(sRenderer.pRenderer);
+            break;
+        }
+    }
+
+    SDL_FreeSurface(numberRender.pSurface);
+    SDL_FreeSurface(stateRender.pSurface);
 
     if (isCrewDead){
         *g = 4; // DEFEAT
     }else{
-        // PHASE 0
-        //   Footprints
-        Footprint(field, crew, *monk);
-
         // PHASE I
         //   Pisteur detection
         for (int i = 0; i < CREW; i++){

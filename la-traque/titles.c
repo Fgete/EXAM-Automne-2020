@@ -17,6 +17,7 @@ void Validation(int, int*, struct renderer);
 
 // Menu title
 void MenuTitle(int* g, struct renderer sRenderer){
+    // Variables
     SDL_Event event;
     char answer;
     int choice = 0;

@@ -35,8 +35,8 @@ void PrintField(struct tile field[XMAX][YMAX], struct renderer sRenderer){
 
     for (int y = 0; y < YMAX; y++){
         for (int x = 0; x < XMAX; x++){
-                gotoxy(x + 2 + XOFFSET, y + 3 + YOFFSET);
-                printf(" ");
+                // gotoxy(x + 2 + XOFFSET, y + 3 + YOFFSET);
+                // printf(" ");
                 // Set sprite position
                 slot.x = OFFSETX * 2 + x * (SLOTWIDTH + SLOTSPACE);
                 slot.y = SLOTSPACE * 2 + y * (SLOTWIDTH + SLOTSPACE);
@@ -52,26 +52,38 @@ void PrintCrew(struct pisteur crew[CREW], struct renderer sRenderer){
     SDL_Rect crewSprite = {OFFSETX, SLOTSPACE, SLOTWIDTH, SLOTWIDTH};
     // Create objects renderer
     rendererObject crewRender;
+    rendererObject exclamRender;
+    rendererObject interoRender;
     // Load images
     crewRender.pSurface = IMG_Load("./assets/misc/crew.png");
+    exclamRender.pSurface = IMG_Load("./assets/misc/exclam.png");
+    interoRender.pSurface = IMG_Load("./assets/misc/intero.png");
     // Debug loading
     if (!crewRender.pSurface)
         printf("crew.png --- LOAD ERROR !\n");
+    if (!exclamRender.pSurface)
+        printf("exclam.png --- LOAD ERROR !\n");
+    if (!interoRender.pSurface)
+        printf("intero.png --- LOAD ERROR !\n");
     // Create textures
     crewRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, crewRender.pSurface);
+    exclamRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, exclamRender.pSurface);
+    interoRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, interoRender.pSurface);
     // Free surfaces
     SDL_FreeSurface(crewRender.pSurface);
+    SDL_FreeSurface(exclamRender.pSurface);
+    SDL_FreeSurface(interoRender.pSurface);
 
     for (int i = 0; i < CREW; i++){
-        if (crew[i].icone == 'P' || crew[i].icone == '?'|| crew[i].icone == '!'){
-            gotoxy(crew[i].x + 2 + XOFFSET, crew[i].y + 3 + YOFFSET);
-            printf("%c", crew[i].icone);
-            // Set sprite position
-            crewSprite.x = OFFSETX * 2 + crew[i].x * (SLOTWIDTH + SLOTSPACE);
-            crewSprite.y = SLOTSPACE * 2 + crew[i].y * (SLOTWIDTH + SLOTSPACE);
-            // Draw textures
+        // Set sprite position
+        crewSprite.x = OFFSETX * 2 + crew[i].x * (SLOTWIDTH + SLOTSPACE);
+        crewSprite.y = SLOTSPACE * 2 + crew[i].y * (SLOTWIDTH + SLOTSPACE);
+        if (crew[i].icone == 'P')
             SDL_RenderCopy(sRenderer.pRenderer, crewRender.pTexture, NULL, &crewSprite);
-        }
+        if (crew[i].icone == '!')
+            SDL_RenderCopy(sRenderer.pRenderer, exclamRender.pTexture, NULL, &crewSprite);
+        if (crew[i].icone == '?')
+            SDL_RenderCopy(sRenderer.pRenderer, interoRender.pTexture, NULL, &crewSprite);
     }
 }
 
