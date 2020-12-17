@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -12,7 +13,7 @@ void MenuVictory(int*);
 void MenuDefeat(int*);
 void PrintKeyInfo(SDL_KeyboardEvent *key);
 void ToggleArrow(int*, SDL_Rect*);
-void Validation(int, int*);
+void Validation(int, int*, struct renderer);
 
 // Menu title
 void MenuTitle(int* g, struct renderer sRenderer){
@@ -22,7 +23,7 @@ void MenuTitle(int* g, struct renderer sRenderer){
 
     // Create sprites
     SDL_Rect background = {0, 0, GetSystemMetrics(SM_CXSCREEN) * WINDOW_RATIO, GetSystemMetrics(SM_CYSCREEN) * WINDOW_RATIO};
-    SDL_Rect arrow = {500, 195, 40, 40};
+    SDL_Rect arrow = {1000 * WINDOW_RATIO, 390 * WINDOW_RATIO, 80 * WINDOW_RATIO, 80 * WINDOW_RATIO};
     // Create objects renderer
     rendererObject menuTitle;
     rendererObject leftArrow;
@@ -53,12 +54,12 @@ void MenuTitle(int* g, struct renderer sRenderer){
             fflush(stdin);
             if (event.type == SDL_KEYDOWN)
                 switch (event.key.keysym.sym){
-                    case SDLK_RETURN: Validation(choice, g); break;
-                    case SDLK_SPACE: Validation(choice, g); break;
+                    case SDLK_RETURN: Validation(choice, g, sRenderer); break;
+                    case SDLK_SPACE: Validation(choice, g, sRenderer); break;
+                    case SDLK_KP_ENTER: Validation(choice, g, sRenderer); break;
                     case SDLK_ESCAPE: *g = -1; break;
                     case SDLK_UP: ToggleArrow(&choice, &arrow); break;
                     case SDLK_DOWN: ToggleArrow(&choice, &arrow); break;
-                    case SDL_QUIT: *g = -1; break;
                     default : break;
                 }
             if (event.type == SDL_QUIT)
@@ -92,7 +93,7 @@ void MenuDefeat(int* g){
     system("cls");
 
     printf("   ### LA TRAQUE ###\n");
-    printf("\nQUEL DRAME ! Tous vos pisteurs sont mort...\n");
+    printf("\nQUEL DRAME ! Tous vos pisteurs sont morts...\n");
 
     *g = 0;
 
@@ -101,20 +102,21 @@ void MenuDefeat(int* g){
 }
 
 // Validate menu proposition
-void Validation(int choice, int* g){
+void Validation(int choice, int* g, struct renderer sRenderer){
     if (!choice)
         *g = 1;
     else
         *g = -1;
+    SDL_RenderClear(sRenderer.pRenderer);
 }
 
 // Navigate belong menu propositions
 void ToggleArrow(int* choice, SDL_Rect* arrow){
     if (*choice == 0){
         *choice = 1;
-        arrow->y = 250;
+        arrow->y = 500 * WINDOW_RATIO;
     }else{
         *choice = 0;
-        arrow->y = 195;
+        arrow->y = 390 * WINDOW_RATIO;
     }
 }

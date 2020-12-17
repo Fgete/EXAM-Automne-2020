@@ -1,12 +1,11 @@
 # depslib dependency file v1.0
-1608128782 source:c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\main.c
+1608161095 source:c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"functions.c"
-	"titles.c"
 
-1608127911 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
+1608165004 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
 	<time.h>
 	<windows.h>
 	"prints.c"
@@ -15,16 +14,18 @@
 	<stdio.h>
 	<stdlib.h>
 
-1608130257 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\titles.c
+1608159576 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\titles.c
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
+	<SDL2/SDL_ttf.h>
 	<stdio.h>
 	<stdlib.h>
 	<windows.h>
 	"graphics.c"
 
-1608070315 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\prints.c
+1608164316 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\prints.c
 	"structures.c"
+	"titles.c"
 
 1583890769 c:\users\franc\desktop\cours\algo\git\_bibliothèques\sdl2-2.0.12\x86_64-w64-mingw32\include\sdl2\sdl.h
 	"SDL_main.h"
@@ -386,8 +387,19 @@
 	"begin_code.h"
 	"close_code.h"
 
-1608128151 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\graphics.c
+1608159578 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\graphics.c
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
+	<SDL2/SDL_ttf.h>
 	<windows.h>
+
+1547322290 c:\users\franc\desktop\cours\algo\git\_bibliothèques\sdl2_ttf-2.0.15\x86_64-w64-mingw32\include\sdl2\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
+
+1547322290 c:\users\franc\desktop\cours\algo\git\_bibliothèques\sdl2-2.0.12\x86_64-w64-mingw32\include\sdl2\sdl_ttf.h
+	"SDL.h"
+	"begin_code.h"
+	"close_code.h"
 

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "functions.c"
-#include "titles.c"
 
 int main(int argc, char *argv[])
 {
@@ -25,8 +24,7 @@ int main(int argc, char *argv[])
     }else{
         // Draw screen
         SDL_Point wSize = {GetSystemMetrics(SM_CXSCREEN) * WINDOW_RATIO, GetSystemMetrics(SM_CYSCREEN) * WINDOW_RATIO};
-        SDL_Point wPos = {(GetSystemMetrics(SM_CXSCREEN) / 2) - (wSize.x / 2), (GetSystemMetrics(SM_CYSCREEN) / 2) - (wSize.y / 2)}; // center window on the screen
-        sRenderer.pWindow = SDL_CreateWindow("La Traque", wPos.x, wPos.y, wSize.x, wSize.y, SDL_WINDOW_SHOWN);
+        sRenderer.pWindow = SDL_CreateWindow("La Traque", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, wSize.x, wSize.y, SDL_WINDOW_SHOWN);
 
         // Init renderer
         if (sRenderer.pWindow){
@@ -40,28 +38,21 @@ int main(int argc, char *argv[])
             SDL_Log("IMG_Init : Failed to init required .jpg and .png support !\n");
             SDL_Log("IMG_Init : %s\n", IMG_GetError());
         }
+        TTF_Init();
 
         while (gameState != -1){
             switch (gameState){
             case 0:
                 // Menu
                 MenuTitle(&gameState, sRenderer);
-                /* while (SDL_PollEvent(&event)){
-                    switch (event.type){
-                        case SDL_KEYDOWN: printf("%s", SDL_GetKeyName(event.key.keysym.sym)); break;
-                        case SDL_KEYUP: printf("--"); break;
-                        case SDL_QUIT: gameState = -1;
-                        default : break;
-                    }
-                } */
                 break;
             case 1:
                 // Init
-                Init(field, crew, &monk, &gameState);
+                Init(field, crew, &monk, &gameState, sRenderer);
                 break;
             case 2:
                 // Game
-                Round(field, crew, &monk, &gameState);
+                Round(field, crew, &monk, &gameState, sRenderer);
                 break;
             case 3:
                 // Victory
