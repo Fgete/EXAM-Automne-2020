@@ -3,11 +3,11 @@
 
 // PROTOTYPES
 void PrintScreen(struct tile[XMAX][YMAX], struct pisteur[CREW], struct monstre, struct renderer);
-void PrintField(struct tile[XMAX][YMAX], struct renderer sRenderer);
+void PrintField(struct renderer sRenderer);
+void PrintBackground(struct renderer sRenderer);
 void PrintCrew(struct pisteur[CREW], struct renderer);
 void PrintCrewInfo(struct pisteur[CREW]);
 void PrintMonstre(struct monstre);
-void PrintBackground(struct renderer);
 
 // Debug crew
 void PrintCrewInfo(struct pisteur crew[CREW]){
@@ -18,25 +18,15 @@ void PrintCrewInfo(struct pisteur crew[CREW]){
 }
 
 // Print the field
-void PrintField(struct tile field[XMAX][YMAX], struct renderer sRenderer){
-    // Create sprite
+void PrintField(struct renderer sRenderer){
     SDL_Rect slot = {OFFSETX, SLOTSPACE, SLOTWIDTH, SLOTWIDTH};
-    // Create objects renderer
     rendererObject slotRender;
-    // Load images
     slotRender.pSurface = IMG_Load("./assets/misc/square.png");
-    // Debug loading
-    if (!slotRender.pSurface)
-        printf("square.png --- LOAD ERROR !\n");
-    // Create textures
     slotRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, slotRender.pSurface);
-    // Free surfaces
     SDL_FreeSurface(slotRender.pSurface);
 
     for (int y = 0; y < YMAX; y++){
         for (int x = 0; x < XMAX; x++){
-                // gotoxy(x + 2 + XOFFSET, y + 3 + YOFFSET);
-                // printf(" ");
                 // Set sprite position
                 slot.x = OFFSETX * 2 + x * (SLOTWIDTH + SLOTSPACE);
                 slot.y = SLOTSPACE * 2 + y * (SLOTWIDTH + SLOTSPACE);
@@ -44,6 +34,19 @@ void PrintField(struct tile field[XMAX][YMAX], struct renderer sRenderer){
                 SDL_RenderCopy(sRenderer.pRenderer, slotRender.pTexture, NULL, &slot);
         }
     }
+
+    SDL_DestroyTexture(slotRender.pTexture);
+}
+
+// Print the background
+void PrintBackground(struct renderer sRenderer){
+    SDL_Rect backgroundRect = {0, 0, GetSystemMetrics(SM_CXSCREEN) * WINDOW_RATIO, GetSystemMetrics(SM_CYSCREEN) * WINDOW_RATIO};
+    rendererObject backgroundRender;
+    backgroundRender.pSurface = IMG_Load("./assets/background/gameTitle.png");
+    backgroundRender.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, backgroundRender.pSurface);
+    SDL_FreeSurface(backgroundRender.pSurface);
+    SDL_RenderCopy(sRenderer.pRenderer, backgroundRender.pTexture, NULL, &backgroundRect);
+    SDL_DestroyTexture(backgroundRender.pTexture);
 }
 
 // Print the field and crew members
@@ -85,55 +88,22 @@ void PrintCrew(struct pisteur crew[CREW], struct renderer sRenderer){
         if (crew[i].icone == '?')
             SDL_RenderCopy(sRenderer.pRenderer, interoRender.pTexture, NULL, &crewSprite);
     }
+
+    SDL_DestroyTexture(crewRender.pTexture);
+    SDL_DestroyTexture(exclamRender.pTexture);
+    SDL_DestroyTexture(interoRender.pTexture);
 }
 
 // Print screen
 void PrintScreen(struct tile field[XMAX][YMAX], struct pisteur crew[CREW], struct monstre monk, struct renderer sRenderer){
     // Clear renderer
     SDL_RenderClear(sRenderer.pRenderer);
-    system("cls");
-    printf("       --- La Traque ---");
-    gotoxy(1 + XOFFSET, 2 + YOFFSET);
-    for (int i = 0; i < XMAX + 2; i++)
-        printf("#");
-    gotoxy(1 + XOFFSET, YMAX + 3 + YOFFSET);
-    for (int i = 0; i < XMAX + 2; i++)
-        printf("#");
-
-    for (int i = 0; i < YMAX + 2; i++){
-        gotoxy(1 + XOFFSET, i + 2 + YOFFSET);
-        printf("#");
-        gotoxy(XMAX + 2 + XOFFSET, i + 2 + YOFFSET);
-        printf("#");
-    }
-
-    PrintBackground(sRenderer);
-    PrintField(field, sRenderer);
     PrintCrew(crew, sRenderer);
     // PrintCrewInfo(crew);
     // PrintMonstre(monk);
 
     // Render
     SDL_RenderPresent(sRenderer.pRenderer);
-}
-
-// Print background
-void PrintBackground(struct renderer sRenderer){
-    // Create sprites
-    SDL_Rect background = {0, 0, GetSystemMetrics(SM_CXSCREEN) * WINDOW_RATIO, GetSystemMetrics(SM_CYSCREEN) * WINDOW_RATIO};
-    // Create objects renderer
-    rendererObject gameBackground;
-    // Load images
-    gameBackground.pSurface = IMG_Load("./assets/background/gameTitle.png");
-    // Debug loading
-    if (!gameBackground.pSurface)
-        printf("gameTitle.png --- LOAD ERROR !\n");
-    // Create textures
-    gameBackground.pTexture = SDL_CreateTextureFromSurface(sRenderer.pRenderer, gameBackground.pSurface);
-    // Draw textures
-    SDL_RenderCopy(sRenderer.pRenderer, gameBackground.pTexture, NULL, &background);
-    // Free surfaces
-    SDL_FreeSurface(gameBackground.pSurface);
 }
 
 // Debug monster
