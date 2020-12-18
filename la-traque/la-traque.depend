@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1608161095 source:c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\main.c
+1608299587 source:c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	"functions.c"
 
-1608290583 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
+1608299754 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\functions.c
 	<time.h>
 	<windows.h>
 	"prints.c"
@@ -387,7 +387,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1608159578 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\graphics.c
+1608299573 c:\users\franc\desktop\cours\algo\git\exam-automne-2020\exam-automne-2020\la-traque\graphics.c
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<SDL2/SDL_ttf.h>

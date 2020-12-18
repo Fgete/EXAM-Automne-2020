@@ -16,8 +16,7 @@ int main(int argc, char *argv[])
     sRenderer.pRenderer = NULL;
     int gameState = 0;
 
-    // Init renderer
-
+    // SDL init
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0){
         SDL_Log("Unable to initialize SDL : %s", SDL_GetError());
         return 1; // return error
@@ -26,18 +25,20 @@ int main(int argc, char *argv[])
         SDL_Point wSize = {GetSystemMetrics(SM_CXSCREEN) * WINDOW_RATIO, GetSystemMetrics(SM_CYSCREEN) * WINDOW_RATIO};
         sRenderer.pWindow = SDL_CreateWindow("La Traque", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, wSize.x, wSize.y, SDL_WINDOW_SHOWN);
 
-        // Init renderer
+        // Renderer init
         if (sRenderer.pWindow){
             sRenderer.pRenderer = SDL_CreateRenderer(sRenderer.pWindow, -1, SDL_RENDERER_PRESENTVSYNC);
         }
 
-        // Init SDL_image
+        // Image init
         int flags = IMG_INIT_JPG|IMG_INIT_PNG;
         int initted = IMG_Init(flags);
         if ((initted & flags) != flags){
-            SDL_Log("IMG_Init : Failed to init required .jpg and .png support !\n");
+            SDL_Log("IMG_Init : Failed to init required support !\n");
             SDL_Log("IMG_Init : %s\n", IMG_GetError());
         }
+
+        // TTF init
         TTF_Init();
 
         while (gameState != -1){
